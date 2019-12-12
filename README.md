@@ -5,7 +5,7 @@
 ![](Images/0.gif)  
 
 * 真实水体模拟：使用物理校正波谱实现的Gerstner波
-* 自适应海况模拟：水体模拟效果自适应于选择的风速(Wind speed 1~35m/s)和扬波距离(Fetch length 50~1500km)
+* 自适应海况模拟：水体模拟效果自适应于选择的风速(Wind speed 1-35m/s)和扬波距离(Fetch length 50-1500km)
 * 海况无缝过渡：在不同海况和风速间优雅并且完全平滑的过渡
 * 高质量的浮力系统：自动部署的基于精确物理的浮力。漂浮物可以充分地与UE4物理系统互动
 * 高性能：基于蓝图(Blueprint)实现的浮力系统并且可以自动本地化(Nativized)为C++代码(已验证版本为4.14或更高)
@@ -13,7 +13,7 @@
 * 无限海洋系统：水体可以伴随摄像机平移和缩放，从而营造无限海洋的假象
 * 无限平铺水体材质：使用已创建的水体模型或者应用水体材质到你自己的模型(Mesh)上
 * 支持AI导航网格(NavMesh)：AI导航网格可创建在水体上
-* 兼容**[Orbit Weather and Seasons](https://www.unrealengine.com/marketplace/orbit-weather-and-seasons)**
+* 兼容[Orbit Weather and Seasons](https://www.unrealengine.com/marketplace/orbit-weather-and-seasons)
 
 
 
@@ -53,3 +53,22 @@ Physical Water Surface拥有三个不同的继承自Water Material的材质实�
 
 ## 水体表面光照
 
+水体表面效果很大程度上受周围环境影响，无论是无限海洋的天空球(Sky Sphere)还是湖泊的毗邻景观(Landscape)。如果你有一个反光程度很大的水体材质的话，就会明白这点是相当正确的。一种使水体表面更具反射性的方法是添加**Reflection Capture Actors**，这样水体表面的渲染效果将会被反射所主导。  
+
+开始建立光照之前，请先检查示例关卡，下面是建立基础光照的设置：  
+
+* 使用关卡中的默认天空球(Sky Sphere)和光源(Light Source)
+* 修改天空球的光照亮度(Sun Brightness)和其所链接的线性光源方向(Rotation)
+* 添加一个天空光(Sky Light)并设置其源类型(Source Type)为**SLS Captured Scene**，这将会从所有角度照亮水体表面和其漂浮物体
+* 添加一个**Lightmass Importance Volume**并将其放大(Scale Up)，例如放大50倍。在视图中，使用**Show -> Vizualize -> Volume Lighting Samples**选项来使你在该体积中拥有多个样本(Sample)。光照样本(Lighting Sample)通常只在静态物体表面上方大量生成，但是由于无限海洋系统的缘故，水体被设置为了可移动物体(Movable)。当我们使Lightmass Importance Volume足够大的时候，引擎将会在该体积中散在地创建一些光照样本，这些用来照亮漂浮在水体上的物体已经足够了，甚至会溢出该体积边界。
+
+
+
+## 使用漂浮组件(The Buoyancy Component)使物体漂浮
+
+浮力组件可以添加到任意静态或骨骼模型上，跟随以下步骤使用浮力组件：  
+
+1. 将模型移动性设置为可移动(Movable)。不要跳过这一步！
+2. 在你模型的细节面板中点击**Add Component**并选择**Buoyancy Component**。浮力组件将会显现在细节面板中。
+3. 在细节面板中点击浮力组件，选择浮力模式：**Single Points**, **Auto Points** 和 **Manual Points**。如果你正在使用Auto Points，可以使用下面的附加选项来微调浮力运动。
+4. 点击**Play**观察动态浮力效果。
